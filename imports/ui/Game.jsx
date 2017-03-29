@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
-import GenericMessage from './GenericMessage.jsx';
 
 export default class Game extends Component {
-
-	constructor(props) {
-		super(props);
-		this.state = {
-			showGiveUp: false,
-		}
-	}
-
+	/*Esta muy bien hecho el componente, estan bien organizados e implementados los diferentes metodos que se renderizan,
+	seria conveniente indicarle al usuario facilmente en que parte de la aplicacion se encuentra y como interactuar con el juego,
+	pero en cuanto a funcionalidad esta muy completo.*/
 	move(colIndex) {
 		Meteor.call('games.move', this.props.game._id, colIndex);
 	}
@@ -21,11 +15,8 @@ export default class Game extends Component {
 			{matrix.map((col, index)=>{
 				let chip = col[rowIndex];
 				let cn = chip===0?'empty-chip':(chip===1?'p1-chip':'p2-chip');
-				let aria = (chip===0?'empty chip':(chip===1?'player 1 chip':'player 2 chip')) + ' at column '+(index+1)+' row '+(6-rowIndex);
 				return (<td key={(totCol*rowIndex)+index} className="chip-container">
-							<div role="log" className={cn} aria-live="polite">
-								{chip!==0 ? <span aria-label={aria}></span>:''}
-							</div>
+							<div className={cn}></div>
 					    </td>);
 			})}
 			</tr>
@@ -56,9 +47,7 @@ export default class Game extends Component {
 									let player = Meteor.userId()===this.props.game.p1._id?'p1-chip':'p2-chip';
 									return (
 										<th key={index}>
-											<button aria-label={'Add chip to column '+(index+1)} className={player} onClick={ ()=>{ this.move(index) } } disabled={ !canAdd } >
-												<span className="glyphicon glyphicon-plus" aria-hidden="true" />
-											</button>
+											<button className={player} onClick={ ()=>{ this.move(index) } } disabled={ !canAdd } > + </button>
 										</th>		
 									);
 								})
@@ -103,12 +92,10 @@ export default class Game extends Component {
 					<div className="col-sm-8 col-xs-12 loading-message">
 						<h4>Waiting for player 2...</h4>
 						<p>Share the game id with your friends!</p>
-						<div className="row">
-						<strong>Game ID: </strong><textarea ref="game_id" className="game-id text-center" rows="1" value={this.props.game._id} readOnly />
+						<p><strong>Game ID: </strong><textarea ref="game_id" className="game-id text-center" rows="1" value={this.props.game._id} readOnly />
 						<button className="options clip" title="Copy to clipboard" onClick={this.copyToClipboard.bind(this)} aria-label="Copy to clipboard">
 							<span className="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
-						</button>
-						</div>
+						</button></p>
 						<button className="options" onClick={()=>{Meteor.call('games.end', this.props.game._id)}}> Exit </button>
 					</div>
 					<div className="col-xs-2 hidden-xs"></div>
@@ -116,7 +103,8 @@ export default class Game extends Component {
 			</div>
 		);
 	}
-
+	//Sería bueno incluir en el footer de cada jugador su estado, ya sea que sea su turno o que esta esperando a que el otro juegue
+	//Pueden manejar eso como una variable en el estado y la pueden incluir en los metodos que ya llaman en el render
 	getGameFooter() {
 		return (
 			<div className="game-footer">
@@ -134,8 +122,18 @@ export default class Game extends Component {
 		);
 	}
 
+	handleWindowClose() {
+		console.log('va a cerrar ventana');
+		window.alert('cerrar');
+		Meteor.call('games.giveUp', this.props.game._id);
+	}
+
+	componentDidMount() {
+    	window.addEventListener('onbeforeunload', this.handleWindowClose);
+	}
+
 	componentWillUnmount() {
-    	//window.removeEventListener('onbeforeunload', this.handleWindowClose);
+    	window.removeEventListener('onbeforeunload', this.handleWindowClose);
 	}
 
 	render() {
