@@ -6,14 +6,19 @@ import Board from './Board.jsx';
 
 import { Games } from '../api/games.js';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
-
+/*En general la aplicacion esta muy completa, las funcionalidades estan bien, los metodos estan bien implementados y la pagina es 
+consistente. Los colores estan bien definidos y la accesibilidad (por lo menos en cuanto a los audits) estan bien. Ademas esta bien
+usado el api, esta implementado con seguridad para evitar que el cliente realice acciones sobre la base de datos. Solamente faltan 
+algunas ayudas para el usuario para que se ubique facilmente y le sea facil navergar, salir de un juego, empezar un juego, saber si 
+inicio sesion o no, saber si es su turno o si debe esperar. En cuanto a lo demas no hay correciones pertinentes al caso*/
 
 class App extends Component {
 
 	componentDidMount() {
 		$('html').attr('lang','eng');
 	}
-
+	/*En el nav usado en el template les conviene poner un titulo que se relacione con donde esta el usuario, ya sea durante un 
+	juego, la pagina principal, o buscando con quien jugar, para que sea mas facil navegar y el usuario sepa donde esta. */
 	render() {
 		return (
 			<div className="container">
